@@ -13,8 +13,10 @@ int main()
     const int ysz = 25, xsz = 80; // size of playing field
     int c;                        // input ASCII var
     int bb = 0;                   // counter for number of cells nearby
-    int tmblr = 0;                // switching between odd and even frames
-
+    /*Arrays of chars*/
+    char oddarr[ysz][xsz]; // odd [1st] frame
+    char evarr[ysz][xsz];  // even [2nd] frame
+    char(*actarr)[xsz] = oddarr;
     struct crds
     {
         int y;
@@ -26,10 +28,6 @@ int main()
     keypad(stdscr, TRUE); // keypad mode on
     curs_set(0);          // hide cursor
     noecho();             // no input effect
-
-    /*Nodelay mode*/
-    // cbreak();              //
-    // nodelay(stdscr, TRUE); //
 
     /*Color mode*/
     start_color();                          // init color mode
@@ -45,33 +43,31 @@ int main()
     struct crds bk_ck;
 
     /*Init arrays of chars*/
-    char crdarr[ysz][xsz];  // odd [1st] frame
-    char mcrdarr[ysz][xsz]; // even [2nd] frame
     for (int i = (ysz - ysz); i < ysz; i++)
     {
         for (int j = (xsz - xsz); j < xsz; j++)
         {
-            crdarr[i][j] = '-';
-            mcrdarr[i][j] = '-';
+            oddarr[i][j] = '-';
+            evarr[i][j] = '-';
         }
     }
 
     /*Cords of cells*/
     cl_1.y = ysz / 2;
     cl_1.x = xsz / 2;
-    crdarr[cl_1.y][cl_1.x] = 'O';
+    actarr[cl_1.y][cl_1.x] = 'O';
 
     cl_2.y = cl_1.y + 1;
     cl_2.x = xsz / 2;
-    crdarr[cl_2.y][cl_2.x] = 'O';
+    actarr[cl_2.y][cl_2.x] = 'O';
 
     cl_3.y = cl_1.y + 2;
     cl_3.x = xsz / 2;
-    crdarr[cl_3.y][cl_3.x] = 'O';
+    actarr[cl_3.y][cl_3.x] = 'O';
 
     // cl_4.y = cl_1.y + 2;
     // cl_4.x = (xsz / 2) + 1;
-    // crdarr[cl_4.y][cl_4.x] = 'O';
+    // actarr[cl_4.y][cl_4.x] = 'O';
 
     while ((c = getch()) != 27 && c == 32)
     {
@@ -82,287 +78,192 @@ int main()
         {
             for (int j = (xsz - xsz); j < xsz; j++)
             {
-                if (tmblr == 0)
-                {
-                    mvprintw(i, j, "%c", crdarr[i][j]);
-                    /*if around ' ' 3 bb -> 'O'*/
-                    if (crdarr[i][j] == '-')
-                    {
-                        /*checks for implementation of closed field*/
-                        if ((i - 1) < 0)
-                        {
-                            bk_ck.y = ysz;
-                        }
-
-                        if ((i - 1) < 0 && (j - 1) < (xsz - xsz))
-                        {
-                            bk_ck.y = ysz;
-                            bk_ck.x = xsz;
-                        }
-                        if ((i - 1) < 0 && (j + 1) > xsz)
-                        {
-                            bk_ck.y = ysz;
-                            bk_ck.x = xsz;
-                        }
-                        if ((j - 1) < (xsz - xsz))
-                        {
-                            bk_ck.x = xsz;
-                        }
-                        if ((j + 1) > (xsz - 1))
-                        {
-                            bk_ck.x = xsz - xsz;
-                        }
-
-                        if ((i + 1) > (ysz - 1))
-                        {
-                            bk_ck.y = ysz - ysz;
-                            if (crdarr[bk_ck.y][bk_ck.x] == 'O')
-                            {
-                                bb++;
-                            }
-                        }
-                        if ((i + 1) > (ysz - 1))
-                        {
-                            bk_ck.y = ysz - ysz;
-                            if (crdarr[bk_ck.y][bk_ck.x] == 'O')
-                            {
-                                bb++;
-                            }
-                        }
-                        if ((j - 1) < (xsz - xsz))
-                        {
-                            bk_ck.x = xsz;
-                            if (crdarr[bk_ck.y][bk_ck.x] == 'O')
-                            {
-                                bb++;
-                            }
-                        }
-                        else if ((j + 1) > (xsz - 1))
-                        {
-                            bk_ck.x = xsz - xsz;
-                            if (crdarr[bk_ck.y][bk_ck.x] == 'O')
-                            {
-                                bb++;
-                            }
-                        }
-                    }
-                    bk_ck.y = i;
-                    bk_ck.x = j;
-
-                    /*TOP*/
-                    if (crdarr[bk_ck.y - 1][bk_ck.x - 1] == 'O') /*left top*/
-                    {
-                        bb++;
-                    }
-                    if (crdarr[bk_ck.y - 1][bk_ck.x] == 'O') /*center top*/
-                    {
-                        bb++;
-                    }
-                    if (crdarr[bk_ck.y - 1][bk_ck.x + 1] == 'O') /*right top*/
-                    {
-                        bb++;
-                    }
-
-                    /*MID*/
-                    if (crdarr[bk_ck.y][bk_ck.x - 1] == 'O') /*left mid*/
-                    {
-                        bb++;
-                    }
-                    if (crdarr[bk_ck.y][bk_ck.x + 1] == 'O') /*right mid*/
-                    {
-                        bb++;
-                    }
-
-                    /*BOT*/
-                    if (crdarr[bk_ck.y + 1][bk_ck.x - 1] == 'O') /*left bot*/
-                    {
-                        bb++;
-                    }
-                    if (crdarr[bk_ck.y + 1][bk_ck.x] == 'O') /*left bot*/
-                    {
-                        bb++;
-                    }
-                    if (crdarr[bk_ck.y + 1][bk_ck.x + 1] == 'O') /*right bot*/
-                    {
-                        bb++;
-                    }
-
-                    if (bb > 2)
-                    {
-                        mcrdarr[bk_ck.y][bk_ck.x] = 'O';
-                    }
-                    bb = 0;
-                }
-                /*if around 'O' 2 or 3 bb -> 'O' else ' '*/
-                else if (crdarr[i][j] == 'O')
+                mvprintw(i, j, "%c", actarr[i][j]);
+                bk_ck.y = i;
+                bk_ck.x = j;
+                /*checks for implementation of closed field*/
+                if (true)
                 {
                     /*TOP*/
-                    if (crdarr[bk_ck.y - 1][bk_ck.x - 1] == 'O') /*left top*/
+                    if ((i - 1) < (ysz - ysz) && (j - 1) < (xsz - xsz)) /*top left*/
                     {
-                        bb++;
+                        bk_ck.y = ysz;
+                        bk_ck.x = xsz;
+                        if (actarr[bk_ck.y][bk_ck.x] == 'O')
+                        {
+                            bb++;
+                            bk_ck.y = i;
+                            bk_ck.x = j;
+                        }
                     }
-                    if (crdarr[bk_ck.y - 1][bk_ck.x] == 'O') /*center top*/
+                    else
                     {
-                        bb++;
+                        if (actarr[bk_ck.y - 1][bk_ck.x - 1] == 'O')
+                        {
+                            bb++;
+                        }
                     }
-                    if (crdarr[bk_ck.y - 1][bk_ck.x + 1] == 'O') /*right top*/
+                    if ((i - 1) < (ysz - ysz)) /*top center*/
                     {
-                        bb++;
+                        bk_ck.y = ysz;
+                        if (actarr[bk_ck.y][bk_ck.x] == 'O')
+                        {
+                            bb++;
+                            bk_ck.y = i;
+                        }
                     }
-
+                    else
+                    {
+                        if (actarr[bk_ck.y - 1][bk_ck.x] == 'O')
+                        {
+                            bb++;
+                        }
+                    }
+                    if ((i - 1) < (ysz - ysz) && (j + 1) >= xsz) /*top right*/
+                    {
+                        bk_ck.y = ysz;
+                        bk_ck.x = xsz - xsz;
+                        if (actarr[bk_ck.y][bk_ck.x] == 'O')
+                        {
+                            bb++;
+                            bk_ck.y = i;
+                            bk_ck.x = j;
+                        }
+                    }
+                    else
+                    {
+                        if (actarr[bk_ck.y - 1][bk_ck.x + 1] == 'O')
+                        {
+                            bb++;
+                        }
+                    }
                     /*MID*/
-                    if (crdarr[bk_ck.y][bk_ck.x - 1] == 'O') /*left mid*/
+                    if ((j - 1) < (xsz - xsz)) /*mid left*/
                     {
-                        bb++;
+                        bk_ck.x = xsz;
+                        if (actarr[bk_ck.y][bk_ck.x] == 'O')
+                        {
+                            bb++;
+                            bk_ck.x = j;
+                        }
                     }
-                    if (crdarr[bk_ck.y][bk_ck.x + 1] == 'O') /*right mid*/
+                    else
                     {
-                        bb++;
+                        if (actarr[bk_ck.y][bk_ck.x - 1] == 'O')
+                        {
+                            bb++;
+                        }
                     }
 
+                    if ((j + 1) >= xsz) /*mid right*/
+                    {
+                        bk_ck.x = xsz - xsz;
+                        if (actarr[bk_ck.y][bk_ck.x] == 'O')
+                        {
+                            bb++;
+                        }
+                    }
+                    else
+                    {
+                        if (actarr[bk_ck.y][bk_ck.x + 1] == 'O')
+                        {
+                            bb++;
+                        }
+                    }
                     /*BOT*/
-                    if (crdarr[bk_ck.y + 1][bk_ck.x - 1] == 'O') /*left bot*/
+                    if ((i + 1) >= ysz && (j - 1) < (xsz - xsz)) /*bot left*/
                     {
-                        bb++;
+                        bk_ck.y = ysz - ysz;
+                        bk_ck.x = xsz;
+                        if (actarr[bk_ck.y][bk_ck.x] == 'O')
+                        {
+                            bb++;
+                            bk_ck.y = i;
+                            bk_ck.x = j;
+                        }
                     }
-                    if (crdarr[bk_ck.y + 1][bk_ck.x] == 'O') /*left bot*/
+                    else
                     {
-                        bb++;
+                        if (actarr[bk_ck.y + 1][bk_ck.x - 1] == 'O')
+                        {
+                            bb++;
+                        }
                     }
-                    if (crdarr[bk_ck.y + 1][bk_ck.x + 1] == 'O') /*right bot*/
+                    if ((i + 1) >= ysz) /*bot center*/
                     {
-                        bb++;
+                        bk_ck.y = ysz - ysz;
+                        if (actarr[bk_ck.y][bk_ck.x] == 'O')
+                        {
+                            bb++;
+                            bk_ck.y = i;
+                        }
                     }
-
-                    if (bb == 2 || bb == 3)
+                    else
                     {
-                        mcrdarr[i][j] = 'O';
+                        if (actarr[bk_ck.y + 1][bk_ck.x] == 'O')
+                        {
+                            bb++;
+                        }
                     }
-                    else if (bb < 2 || bb > 3)
+                    if ((i + 1) >= ysz && (j + 1) >= xsz) /*bot right*/
                     {
-                        mcrdarr[i][j] = '-';
+                        bk_ck.y = ysz - ysz;
+                        bk_ck.x = xsz - xsz;
+                        if (actarr[bk_ck.y][bk_ck.x] == 'O')
+                        {
+                            bb++;
+                            bk_ck.y = i;
+                            bk_ck.x = j;
+                        }
                     }
-                    bb = 0;
+                    else
+                    {
+                        if (actarr[bk_ck.y + 1][bk_ck.x + 1] == 'O')
+                        {
+                            bb++;
+                        }
+                    }
                 }
-            }
-            else if (tmblr == 1)
-            {
-                mvprintw(i, j, "%c", mcrdarr[i][j]);
                 /*if around ' ' 3 bb -> 'O'*/
-                if (mcrdarr[i][j] == '-')
+                if (actarr[i][j] == '-')
                 {
-                    /*TOP*/
-                    if (mcrdarr[bk_ck.y - 1][bk_ck.x - 1] == 'O') /*left top*/
-                    {
-                        bb++;
-                    }
-                    if (mcrdarr[bk_ck.y - 1][bk_ck.x] == 'O') /*center top*/
-                    {
-                        bb++;
-                    }
-                    if (mcrdarr[bk_ck.y - 1][bk_ck.x + 1] == 'O') /*right top*/
-                    {
-                        bb++;
-                    }
-
-                    /*MID*/
-                    if (mcrdarr[bk_ck.y][bk_ck.x - 1] == 'O') /*left mid*/
-                    {
-                        bb++;
-                    }
-                    if (mcrdarr[bk_ck.y][bk_ck.x + 1] == 'O') /*right mid*/
-                    {
-                        bb++;
-                    }
-
-                    /*BOT*/
-                    if (mcrdarr[bk_ck.y + 1][bk_ck.x - 1] == 'O') /*left bot*/
-                    {
-                        bb++;
-                    }
-                    if (mcrdarr[bk_ck.y + 1][bk_ck.x] == 'O') /*left bot*/
-                    {
-                        bb++;
-                    }
-                    if (mcrdarr[bk_ck.y + 1][bk_ck.x + 1] == 'O') /*right bot*/
-                    {
-                        bb++;
-                    }
-
                     if (bb > 2)
                     {
-                        crdarr[i][j] = 'O';
+                        actarr[i][j] = 'O';
+                    }
+                    else
+                    {
+                        actarr[i][j] = '-';
                     }
                     bb = 0;
                 }
                 /*if around 'O' 2 or 3 bb -> 'O' else ' '*/
-                else if (mcrdarr[i][j] == 'O')
+                else if (actarr[i][j] == 'O')
                 {
-                    /*TOP*/
-                    if (mcrdarr[bk_ck.y - 1][bk_ck.x - 1] == 'O') /*left top*/
-                    {
-                        bb++;
-                    }
-                    if (mcrdarr[bk_ck.y - 1][bk_ck.x] == 'O') /*center top*/
-                    {
-                        bb++;
-                    }
-                    if (mcrdarr[bk_ck.y - 1][bk_ck.x + 1] == 'O') /*right top*/
-                    {
-                        bb++;
-                    }
-
-                    /*MID*/
-                    if (mcrdarr[bk_ck.y][bk_ck.x - 1] == 'O') /*left mid*/
-                    {
-                        bb++;
-                    }
-                    if (mcrdarr[bk_ck.y][bk_ck.x + 1] == 'O') /*right mid*/
-                    {
-                        bb++;
-                    }
-
-                    /*BOT*/
-                    if (mcrdarr[bk_ck.y + 1][bk_ck.x - 1] == 'O') /*left bot*/
-                    {
-                        bb++;
-                    }
-                    if (mcrdarr[bk_ck.y + 1][bk_ck.x] == 'O') /*left bot*/
-                    {
-                        bb++;
-                    }
-                    if (mcrdarr[bk_ck.y + 1][bk_ck.x + 1] == 'O') /*right bot*/
-                    {
-                        bb++;
-                    }
-
                     if (bb == 2 || bb == 3)
                     {
-                        crdarr[i][j] = 'O';
+                        actarr[i][j] = 'O';
                     }
                     else if (bb < 2 || bb > 3)
                     {
-                        crdarr[i][j] = '-';
+                        actarr[i][j] = '-';
                     }
                     bb = 0;
+                }
+                if (actarr == oddarr)
+                {
+                    actarr = evarr;
+                }
+                else
+                {
+                    actarr == oddarr;
                 }
             }
         }
     }
-    // switching between odd and even frames
-    if (true)
-    {
-        if (tmblr == 0)
-        {
-            tmblr = 1;
-            continue;
-        }
-        else if (tmblr == 1)
-        {
-            tmblr = 0;
-        }
-    }
+    endwin();
+
+    return 0;
 }
-endwin();
-return 0;
-}
+
+// if (i >= ysz - ysz && i < ysz && j >= xsz - xsz && j < xsz)
