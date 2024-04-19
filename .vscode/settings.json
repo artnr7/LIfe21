@@ -3,5 +3,6 @@
         "*.embeddedhtml": "html",
         "stdio.h": "c",
         "pdcurses.h": "c"
-    }
+    },
+    "workbench.colorTheme": "Default Dark Modern"
 }
