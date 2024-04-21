@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <pdcurses.h>
 
 /*********************************************************/
 // int *p, *d
@@ -18,25 +19,70 @@
 int main()
 {
 
-    int A[1][3] = {1, 2, 3};
-    int *p = A[0];
-    int *d = &A[0][0];
-    if (p == d)
+    // int A[1][3] = {1, 2, 3};
+    // int *p = A[0];
+    // int *d = &A[0][0];
+    // if (p == d)
+    // {
+    //     printf("YEAHS");
+    // }
+    // else
+    // {
+    //     printf("\nNOOPE");
+    // }
+    // if (*(p + 3) == *(A + 3))
+    // {
+    //     printf("\nYEAHS2");
+    // }
+    // else
+    // {
+    //     printf("\nNOOPE2");
+    // }
+    initscr();
+
+    int ysz = 5, xsz = 8;
+    int c;
+    char A[ysz][xsz];
+    char B[ysz][xsz];
+    char *parr[ysz];
+    for (int i = 0; i < ysz; i++)
     {
-        printf("YEAHS");
-    }
-    else
-    {
-        printf("\nNOOPE");
-    }
-    if (*(p + 3) == *(A + 3))
-    {
-        printf("\nYEAHS2");
-    }
-    else
-    {
-        printf("\nNOOPE2");
+        for (int j = 0; j < xsz; j++)
+        {
+            if (i % 2 == 0)
+            {
+                A[i][j] = '-';
+                B[i][j] = '0';
+            }
+            else
+            {
+                A[i][j] = '0';
+                B[i][j] = '-';
+            }
+        }
     }
 
+    for (int i = 0; i < ysz; i++)
+    {
+        parr[i] = A[i];
+        for (int j = 0; j < xsz; j++)
+        {
+            mvprintw(i, j, "%c ", parr[i][j]);
+        }
+    }
+    if (c = getch() == 32)
+    {
+        for (int i = 0; i < ysz; i++)
+        {
+            parr[i] = B[i];
+            for (int j = 0; j < xsz; j++)
+            {
+                mvprintw(i, j, "%c ", parr[i][j]);
+            }
+        }
+    }
+
+    getch();
+    endwin();
     return 0;
 }
