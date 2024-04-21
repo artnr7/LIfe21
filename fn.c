@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pdcurses.h>
-
+// if (i >= ysz - ysz && i < ysz && j >= xsz - xsz && j < xsz)
 /*********************************************************/
 // int *p, *d
 // A[3] - объявление массива с 3 элементами
@@ -18,7 +18,6 @@
 // printf("%d", A[0][0]);
 int main()
 {
-
     // int A[1][3] = {1, 2, 3};
     // int *p = A[0];
     // int *d = &A[0][0];
@@ -37,52 +36,58 @@ int main()
     // else
     // {
     //     printf("\nNOOPE2");
+    // // }
+    // initscr();
+    // int ysz = 5, xsz = 8;
+    // int c;
+    // char A[ysz][xsz];
+    // char B[ysz][xsz];
+    // char *parr[ysz];
+    // for (int i = 0; i < ysz; i++)
+    // {
+    //     for (int j = 0; j < xsz; j++)
+    //     {
+    //         if (i % 2 == 0)
+    //         {
+    //             A[i][j] = '-';
+    //             B[i][j] = '0';
+    //         }
+    //         else
+    //         {
+    //             A[i][j] = '0';
+    //             B[i][j] = '-';
+    //         }
+    //     }
     // }
-    initscr();
-
-    int ysz = 5, xsz = 8;
-    int c;
-    char A[ysz][xsz];
-    char B[ysz][xsz];
-    char *parr[ysz];
-    for (int i = 0; i < ysz; i++)
-    {
-        for (int j = 0; j < xsz; j++)
-        {
-            if (i % 2 == 0)
-            {
-                A[i][j] = '-';
-                B[i][j] = '0';
-            }
-            else
-            {
-                A[i][j] = '0';
-                B[i][j] = '-';
-            }
-        }
-    }
-
-    for (int i = 0; i < ysz; i++)
-    {
-        parr[i] = A[i];
-        for (int j = 0; j < xsz; j++)
-        {
-            mvprintw(i, j, "%c ", parr[i][j]);
-        }
-    }
-    if (c = getch() == 32)
-    {
-        for (int i = 0; i < ysz; i++)
-        {
-            parr[i] = B[i];
-            for (int j = 0; j < xsz; j++)
-            {
-                mvprintw(i, j, "%c ", parr[i][j]);
-            }
-        }
-    }
-
-    getch();
-    endwin();
-    return 0;
+    // for (int i = 0; i < ysz; i++)
+    // {
+    //     parr[i] = A[i];
+    //     for (int j = 0; j < xsz; j++)
+    //     {
+    //         mvprintw(i, j, "%c ", parr[i][j]);
+    //     }
+    // }
+    // if (c = getch() == 32)
+    // {
+    //     for (int i = 0; i < ysz; i++)
+    //     {
+    //         parr[i] = B[i];
+    //         for (int j = 0; j < xsz; j++)
+    //         {
+    //             mvprintw(i, j, "%c ", parr[i][j]);
+    //         }
+    //     }
+    // }
+    // getch();
+    // endwin();
+    // return 0;
 }
+
+// void open_file(int choice)
+// {
+//     if (choice == 1)
+//     {
+//         act_file = fopen("LIFE21/shape_samples/.txt", "r");
+//     }
+//     return 0;
+// }
