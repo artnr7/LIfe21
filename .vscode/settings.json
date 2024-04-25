@@ -2,7 +2,9 @@
     "files.associations": {
         "*.embeddedhtml": "html",
         "stdio.h": "c",
-        "pdcurses.h": "c"
+        "pdcurses.h": "c",
+        "stdlib.h": "c"
     },
-    "workbench.colorTheme": "Default Dark Modern"
+    "workbench.colorTheme": "Default Dark Modern",
+    "C_Cpp.errorSquiggles": "disabled"
 }

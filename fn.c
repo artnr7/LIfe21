@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pdcurses.h>
-// if (i >= ysz - ysz && i < ysz && j >= xsz - xsz && j < xsz)
 /*********************************************************/
 // int *p, *d
 // A[3] - объявление массива с 3 элементами
@@ -91,3 +90,5 @@ int main()
 //     }
 //     return 0;
 // }
+
+//   if (i >= ysz - ysz && i < ysz && j >= xsz - xsz && j < xsz)

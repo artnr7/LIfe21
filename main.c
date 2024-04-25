@@ -9,10 +9,11 @@ int main()
 
     /**VARIABLES**/
     /*Main Var*/
-    const int ysz = 15, xsz = 48; // size of playing field
-    int c;                        // input var for ASCII
-    int bb = 0;                   // counter for number of live cells nearby
-    char vch = '-';
+    const int ysz = 25, xsz = 80;                 // size of playing field
+    const int yarrsz = ysz + 2, xarrsz = xsz + 2; // arrays size
+    int c;                                        // input var for ASCII
+    int bb = 0;                                   // counter for number of live cells nearby
+    char vch = ' ';                               // char space
 
     // /*Files*/
     // FILE *act_file;
@@ -21,16 +22,14 @@ int main()
     // char line[254];      // writing line from file
 
     /*Arrays Of Chars*/
-    char marr[ysz][xsz];  // main array
-    char bfarr[ysz][xsz]; // buffer array
-    struct crds           // struct for working with 2-dimensions var
+
+    char marr[yarrsz][xarrsz];  // main array
+    char bfarr[yarrsz][xarrsz]; // buffer array
+    struct crds                 // struct for working with 2-dimensions var
     {
         int y, x;
     };
     // int *nmbr_cells[5];
-
-    /*Init a block of check*/
-    struct crds bk_ck;
 
     /**PDCURSES**/
     /*Init Screen*/
@@ -79,22 +78,22 @@ int main()
     //     nmbr_cells[i] = crds[i];
     // }
 
-    /*Entering Arrays Of Chars*/
-    for (int i = (ysz - ysz); i < ysz; i++)
-    {
-        for (int j = (xsz - xsz); j < xsz; j++)
-        {
-            marr[i][j] = vch;
-            bfarr[i][j] = vch;
-        }
-    }
-
-    /*Init cells and a block of check*/
+    /*Init cells*/
     struct crds cl_1;
     struct crds cl_2;
     struct crds cl_3;
     struct crds cl_4;
     struct crds cl_5;
+
+    /*Entering Arrays Of Chars*/
+    for (int i = 0; i < yarrsz; i++)
+    {
+        for (int j = 0; j < xarrsz; j++)
+        {
+            marr[i][j] = vch;
+            bfarr[i][j] = vch;
+        }
+    }
 
     /*Cords of cells*/
     cl_1.y = 7;
@@ -118,223 +117,70 @@ int main()
     marr[cl_5.y][cl_5.x] = 'O';
 
     /***MAIN GAME CYCLE**************************************************************************************/
-    while ((c = getch()) != 27 && c == 32)
+    do
     {
         clear();
-        /*The Cycle Of Searching For Places For New Life*/
-        for (int i = (ysz - ysz); i < ysz; i++)
+        for (int i = 1; i < xarrsz - 1; i++)
         {
-            for (int j = (xsz - xsz); j < xsz; j++)
+            marr[0][i] = marr[yarrsz - 2][i];
+            bfarr[0][i] = bfarr[yarrsz - 2][i];
+            marr[yarrsz - 1][i] = marr[1][i];
+            bfarr[yarrsz - 1][i] = bfarr[1][i];
+        }
+        for (int i = 1; i < yarrsz - 1; i++)
+        {
+            marr[i][0] = marr[i][xarrsz - 2];
+            bfarr[i][0] = bfarr[i][xarrsz - 2];
+            marr[i][xarrsz - 1] = marr[i][1];
+            bfarr[i][xarrsz - 1] = bfarr[i][1];
+        }
+        marr[0][0] = marr[yarrsz - 2][xarrsz - 2];
+        bfarr[0][0] = bfarr[yarrsz - 2][xarrsz - 2];
+        marr[0][xarrsz - 1] = marr[yarrsz - 2][1];
+        bfarr[0][xarrsz - 1] = bfarr[yarrsz - 2][1];
+        marr[yarrsz - 1][0] = marr[1][xarrsz - 2];
+        bfarr[yarrsz - 1][0] = bfarr[1][xarrsz - 2];
+        marr[yarrsz - 1][xarrsz - 1] = marr[1][1];
+        bfarr[yarrsz - 1][xarrsz - 1] = bfarr[1][1];
+
+        /*The Cycle Of Searching For Places For New Life*/
+        for (int i = 1; i < yarrsz - 1; i++)
+        {
+            for (int j = 1; j < xarrsz - 1; j++)
             {
-                mvprintw(i, j, "%c", marr[i][j]);
-                bk_ck.y = i;
-                bk_ck.x = j;
-                /*checks for implementation of closed field*/
-                /*TOP*/
-                if ((i - 1) < (ysz - ysz) && (j - 1) < (xsz - xsz)) /*top left*/
+                mvprintw(i - 1, j - 1, "%c", marr[i][j]);
+                if (marr[i - 1][j - 1] == 'O') /*top left*/
                 {
-                    bk_ck.y = ysz - 1;
-                    bk_ck.x = xsz - 1;
-                    if (marr[bk_ck.y][bk_ck.x] == 'O')
-                    {
-                        bb++;
-                    }
-                    bk_ck.y = i;
-                    bk_ck.x = j;
+                    bb++;
                 }
-                else
+                if (marr[i - 1][j] == 'O') /*top center*/
                 {
-                    if (marr[bk_ck.y - 1][bk_ck.x - 1] == 'O')
-                    {
-                        bb++;
-                    }
+                    bb++;
                 }
-                if ((i - 1) < (ysz - ysz)) /*top center*/
+                if (marr[i - 1][j + 1] == 'O') /*top right*/
                 {
-                    bk_ck.y = ysz - 1;
-                    if (marr[bk_ck.y][bk_ck.x] == 'O')
-                    {
-                        bb++;
-                    }
-                    bk_ck.y = i;
+                    bb++;
                 }
-                else
+                if (marr[i][j - 1] == 'O') /*mid left*/
                 {
-                    if (marr[bk_ck.y - 1][bk_ck.x] == 'O')
-                    {
-                        bb++;
-                    }
+                    bb++;
                 }
-                if ((i - 1) < (ysz - ysz) && (j + 1) >= xsz) /*top right*/
+                if (marr[i][j + 1] == 'O') /*mid right*/
                 {
-                    bk_ck.y = ysz - 1;
-                    bk_ck.x = xsz - xsz;
-                    if (marr[bk_ck.y][bk_ck.x] == 'O')
-                    {
-                        bb++;
-                    }
-                    bk_ck.y = i;
-                    bk_ck.x = j;
+                    bb++;
                 }
-                else
+                if (marr[i + 1][j - 1] == 'O') /*bot left*/
                 {
-                    if (marr[bk_ck.y - 1][bk_ck.x + 1] == 'O')
-                    {
-                        bb++;
-                    }
+                    bb++;
                 }
-                /*MID*/
-                if ((j - 1) < (xsz - xsz)) /*mid left*/
+                if (marr[i + 1][j] == 'O') /*bot center*/
                 {
-                    bk_ck.x = xsz - 1;
-                    if (marr[bk_ck.y][bk_ck.x] == 'O')
-                    {
-                        bb++;
-                    }
-                    bk_ck.x = j;
+                    bb++;
                 }
-                else
+                if (marr[i + 1][j + 1] == 'O') /*bot right*/
                 {
-                    if (marr[bk_ck.y][bk_ck.x - 1] == 'O')
-                    {
-                        bb++;
-                    }
+                    bb++;
                 }
-                if ((j + 1) >= xsz) /*mid right*/
-                {
-                    bk_ck.x = xsz - xsz;
-                    if (marr[bk_ck.y][bk_ck.x] == 'O')
-                    {
-                        bb++;
-                    }
-                    bk_ck.x = j;
-                }
-                else
-                {
-                    if (marr[bk_ck.y][bk_ck.x + 1] == 'O')
-                    {
-                        bb++;
-                    }
-                }
-                /*BOT*/
-                if ((i + 1) >= ysz && (j - 1) < (xsz - xsz)) /*bot left*/
-                {
-                    bk_ck.y = ysz - ysz;
-                    bk_ck.x = xsz - 1;
-                    if (marr[bk_ck.y][bk_ck.x] == 'O')
-                    {
-                        bb++;
-                    }
-                    bk_ck.y = i;
-                    bk_ck.x = j;
-                }
-                else
-                {
-                    if (marr[bk_ck.y + 1][bk_ck.x - 1] == 'O')
-                    {
-                        bb++;
-                    }
-                }
-                if ((i + 1) >= ysz) /*bot center*/
-                {
-                    bk_ck.y = ysz - ysz;
-                    if (marr[bk_ck.y][bk_ck.x] == 'O')
-                    {
-                        bb++;
-                    }
-                    bk_ck.y = i;
-                }
-                else
-                {
-                    if (marr[bk_ck.y + 1][bk_ck.x] == 'O')
-                    {
-                        bb++;
-                    }
-                }
-                if ((i + 1) >= ysz && (j + 1) >= xsz) /*bot right*/
-                {
-                    bk_ck.y = ysz - ysz;
-                    bk_ck.x = xsz - xsz;
-                    if (marr[bk_ck.y][bk_ck.x] == 'O')
-                    {
-                        bb++;
-                    }
-                    bk_ck.y = i;
-                    bk_ck.x = j;
-                }
-                else
-                {
-                    if (marr[bk_ck.y + 1][bk_ck.x + 1] == 'O')
-                    {
-                        bb++;
-                    }
-                }
-                ////////////////////////////////////////////////////////////////
-                // if ((i + 1) >= ysz && j < xsz)
-                // {
-                //     bk_ck.y = ysz - ysz;
-                //     bk_ck.x = j - 1;
-                //     if (marr[bk_ck.y][bk_ck.x] == 'O')
-                //     {
-                //         bb++;
-                //     }
-                //     bk_ck.x = j + 1;
-                //     if (marr[bk_ck.y][bk_ck.x] == 'O')
-                //     {
-                //         bb++;
-                //     }
-                //     bk_ck.y = i;
-                //     bk_ck.x = j;
-                // }
-                // if ((i - 1) < ysz - ysz && j < xsz)
-                // {
-                //     bk_ck.y = ysz - 1;
-                //     bk_ck.x = j - 1;
-                //     if (marr[bk_ck.y][bk_ck.x] == 'O')
-                //     {
-                //         bb++;
-                //     }
-                //     bk_ck.x = j + 1;
-                //     if (marr[bk_ck.y][bk_ck.x] == 'O')
-                //     {
-                //         bb++;
-                //     }
-                //     bk_ck.y = i;
-                //     bk_ck.x = j;
-                // }
-                //  if (j - 1 < xsz - xsz && i < ysz)
-                // {
-                //     bk_ck.y = i - 1;
-                //     bk_ck.x = xsz - 1;
-                //     if (marr[bk_ck.y][bk_ck.x] == 'O')
-                //     {
-                //         bb++;
-                //     }
-                //     bk_ck.y = i + 1;
-                //     if (marr[bk_ck.y][bk_ck.x] == 'O')
-                //     {
-                //         bb++;
-                //     }
-                //     bk_ck.y = i;
-                //     bk_ck.x = j;
-                // }
-                // if (j + 1 >= xsz && i < ysz)
-                // {
-                //     bk_ck.y = i - 1;
-                //     bk_ck.x = xsz - xsz;
-                //     if (marr[bk_ck.y][bk_ck.x] == 'O')
-                //     {
-                //         bb++;
-                //     }
-                //     bk_ck.y = i + 1;
-                //     if (marr[bk_ck.y][bk_ck.x] == 'O')
-                //     {
-                //         bb++;
-                //     }
-                //     bk_ck.y = i;
-                //     bk_ck.x = j;
-                // }
-                // //////////////////////////////////////////////////////////
                 /*if around ' ' 3 bb -> 'O'*/
                 if (marr[i][j] == vch)
                 {
@@ -354,7 +200,7 @@ int main()
                     {
                         bfarr[i][j] = 'O';
                     }
-                    else if (bb < 2 || bb > 3)
+                    if (bb < 2 || bb > 3)
                     {
                         bfarr[i][j] = vch;
                     }
@@ -363,14 +209,14 @@ int main()
             }
         }
 
-        for (int i = (ysz - ysz); i < ysz; i++)
+        for (int i = 1; i < yarrsz - 1; i++)
         {
-            for (int j = (xsz - xsz); j < xsz; j++)
+            for (int j = 1; j < xarrsz - 1; j++)
             {
                 marr[i][j] = bfarr[i][j];
             }
         }
-    }
+    } while ((c = getch()) != 27 && c == 32);
     endwin();
 
     return 0;
