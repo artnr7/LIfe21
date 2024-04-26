@@ -1,0 +1,1 @@
+nmb_of_cells 3 y 7 x 24 y 7 x 25 y 8 x 24

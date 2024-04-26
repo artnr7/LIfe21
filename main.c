@@ -13,23 +13,21 @@ int main()
     const int yarrsz = ysz + 2, xarrsz = xsz + 2; // arrays size
     int c;                                        // input var for ASCII
     int bb = 0;                                   // counter for number of live cells nearby
-    char vch = ' ';                               // char space
-
-    // /*Files*/
-    // FILE *act_file;
-    // int nmbr_of_fls = 2; // number of files with coordinates
-    // int choice;          // var for working with files
-    // char line[254];      // writing line from file
+    char sch = ' ';                               // space char
 
     /*Arrays Of Chars*/
-
     char marr[yarrsz][xarrsz];  // main array
     char bfarr[yarrsz][xarrsz]; // buffer array
     struct crds                 // struct for working with 2-dimensions var
     {
         int y, x;
     };
-    // int *nmbr_cells[5];
+
+    /**Files**/
+    FILE *act_file;
+    int nmb_of_fls = 3; // number of files with coordinates
+    int choice;         // var for working with files
+    int nmb_of_cls;
 
     /**PDCURSES**/
     /*Init Screen*/
@@ -43,83 +41,92 @@ int main()
     bkgd(COLOR_PAIR(1));                    // color background pair
 
     /***GAME**************************************************************************************/
-    // /*Init cells*/
-    // while (true)
-    // {
-    //     printf("Enter correct number of file[1-3]:");
-    //     scanf("%d", &choice);
-    //     if (choice <= nmbr_of_fls - nmbr_of_fls || choice > nmbr_of_fls)
-    //     {
-    //         continue;
-    //     }
-    //     if (choice == 1)
-    //     {
-    //         act_file = fopen("shape_samples/1_static_blinker.txt", "r");
-    //         while (fgets(line, 254, act_file))
-    //         {
-    //             printf("%s", line);
-    //         }
-    //         fclose(act_file);
-    //         break;
-    //     }
-    //     if (choice == 2)
-    //     {
-    //         act_file = fopen("shape_samples/2_move_arrow.txt", "r");
-    //         while (fgets(line, 254, act_file))
-    //         {
-    //             printf("%s", line);
-    //         }
-    //         fclose(act_file);
-    //         break;
-    //     }
-    // }
-    // for (int i = 0; i < 5; i++)
-    // {
-    //     nmbr_cells[i] = crds[i];
-    // }
-
-    /*Init cells*/
-    struct crds cl_1;
-    struct crds cl_2;
-    struct crds cl_3;
-    struct crds cl_4;
-    struct crds cl_5;
 
     /*Entering Arrays Of Chars*/
     for (int i = 0; i < yarrsz; i++)
     {
         for (int j = 0; j < xarrsz; j++)
         {
-            marr[i][j] = vch;
-            bfarr[i][j] = vch;
+            marr[i][j] = sch;
         }
     }
 
+    /*Init cells*/
+    while (true)
+    {
+        printf("\nEnter correct number of file[1-3]:");
+        scanf("%d", &choice);
+        if (choice <= 0 || choice > nmb_of_fls)
+        {
+            continue;
+        }
+        if (choice == 1)
+        {
+            act_file = fopen("shape_samples/1_static_blinker.txt", "r");
+            if (!act_file)
+            {
+                printf("Error occured while opening file\n");
+                return 1;
+            }
+            fscanf(act_file, "nmb_of_cells %d", &nmb_of_cls);
+            fseek(act_file, 0, SEEK_SET);
+            break;
+        }
+        if (choice == 2)
+        {
+            act_file = fopen("shape_samples/2_move_arrow.txt", "r");
+            if (!act_file)
+            {
+                printf("Error occured while opening file\n");
+                return 1;
+            }
+            fscanf(act_file, "nmb_of_cells %d", &nmb_of_cls);
+            fseek(act_file, 0, SEEK_SET);
+            break;
+        }
+        if (choice == 3)
+        {
+            act_file = fopen("shape_samples/3_static_block.txt", "r");
+            if (!act_file)
+            {
+                printf("Error occured while opening file\n");
+                return 1;
+            }
+            fscanf(act_file, "nmb_of_cells %d", &nmb_of_cls);
+            fseek(act_file, 0, SEEK_SET);
+            break;
+        }
+    }
+    struct crds cell[nmb_of_cls];
+    if (choice == 1)
+    {
+        fscanf(act_file, "nmb_of_cells %d y %d x %d y %d x %d y %d x %d",
+               &nmb_of_cls, &cell[0].y, &cell[0].x, &cell[1].y, &cell[1].x, &cell[2].y, &cell[2].x);
+    }
+    if (choice == 2)
+    {
+        fscanf(act_file, "nmb_of_cells %d y %d x %d y %d x %d y %d x %d y %d x %d y %d x %d",
+               &nmb_of_cls, &cell[0].y, &cell[0].x, &cell[1].y, &cell[1].x, &cell[2].y, &cell[2].x,
+               &cell[3].y, &cell[3].x, &cell[4].y, &cell[4].x);
+    }
+    if (choice == 3)
+    {
+        fscanf(act_file, "nmb_of_cells %d y %d x %d y %d x %d y %d x %d",
+               &nmb_of_cls, &cell[0].y, &cell[0].x, &cell[1].y, &cell[1].x, &cell[2].y, &cell[2].x);
+    }
+    fclose(act_file);
+
     /*Cords of cells*/
-    cl_1.y = 7;
-    cl_1.x = 24;
-    marr[cl_1.y][cl_1.x] = 'O';
-
-    cl_2.y = 8;
-    cl_2.x = 25;
-    marr[cl_2.y][cl_2.x] = 'O';
-
-    cl_3.y = 9;
-    cl_3.x = 25;
-    marr[cl_3.y][cl_3.x] = 'O';
-
-    cl_4.y = 9;
-    cl_4.x = 24;
-    marr[cl_4.y][cl_4.x] = 'O';
-
-    cl_5.y = 9;
-    cl_5.x = 23;
-    marr[cl_5.y][cl_5.x] = 'O';
+    for (int i = 0; i < nmb_of_cls; i++)
+    {
+        marr[cell[i].y][cell[i].x] = 'O';
+    }
 
     /***MAIN GAME CYCLE**************************************************************************************/
     do
     {
-        clear();
+        clear(); // clearing the screen
+        /*entering array edges*/
         for (int i = 1; i < xarrsz - 1; i++)
         {
             marr[0][i] = marr[yarrsz - 2][i];
@@ -143,7 +150,7 @@ int main()
         marr[yarrsz - 1][xarrsz - 1] = marr[1][1];
         bfarr[yarrsz - 1][xarrsz - 1] = bfarr[1][1];
 
-        /*The Cycle Of Searching For Places For New Life*/
+        /*The Main Cycle Of Searching For Places For New Life*/
         for (int i = 1; i < yarrsz - 1; i++)
         {
             for (int j = 1; j < xarrsz - 1; j++)
@@ -182,7 +189,7 @@ int main()
                     bb++;
                 }
                 /*if around ' ' 3 bb -> 'O'*/
-                if (marr[i][j] == vch)
+                if (marr[i][j] == sch)
                 {
                     if (bb == 3)
                     {
@@ -190,7 +197,7 @@ int main()
                     }
                     else
                     {
-                        bfarr[i][j] = vch;
+                        bfarr[i][j] = sch;
                     }
                 }
                 /*if around 'O' 2 or 3 bb -> 'O' else ' '*/
@@ -202,13 +209,13 @@ int main()
                     }
                     if (bb < 2 || bb > 3)
                     {
-                        bfarr[i][j] = vch;
+                        bfarr[i][j] = sch;
                     }
                 }
                 bb = 0;
             }
         }
-
+        /*copying data from buffer to main array*/
         for (int i = 1; i < yarrsz - 1; i++)
         {
             for (int j = 1; j < xarrsz - 1; j++)

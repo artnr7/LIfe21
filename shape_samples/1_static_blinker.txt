@@ -1,15 +1,1 @@
-
-    /*Init cells and a block of check*/
-    struct crds cl_1;
-    struct crds cl_2;
-    struct crds cl_3;
-    /*Cords of cells*/
-    cl_1.y = ysz / 2;
-    cl_1.x = xsz / 2;
-    marr[cl_1.y][cl_1.x] = 'O';
-    cl_2.y = cl_1.y + 1;
-    cl_2.x = cl_1.x;
-    marr[cl_2.y][cl_2.x] = 'O';
-    cl_3.y = cl_1.y + 2;
-    cl_3.x = cl_1.x;
-    marr[cl_3.y][cl_3.x] = 'O';
+nmb_of_cells 3 y 7 x 24 y 8 x 24 y 9 x 24

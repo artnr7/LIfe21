@@ -92,3 +92,11 @@ int main()
 // }
 
 //   if (i >= ysz - ysz && i < ysz && j >= xsz - xsz && j < xsz)
+
+// cl_4.y = 9;
+// cl_4.x = 24;
+// marr[cl_4.y][cl_4.x] = 'O';
+
+// cl_5.y = 9;
+// cl_5.x = 23;
+// marr[cl_5.y][cl_5.x] = 'O';
